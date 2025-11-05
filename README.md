@@ -9,8 +9,8 @@ Aplicación web interactiva para practicar y prepararse para las Pruebas Saber P
   - ✍️ Comunicación Escrita
   - 🌍 Inglés (con textos de lectura y traducción)
 - **Modos de Estudio:**
-  - **Práctica Rápida:** Elige un módulo específico (10 preguntas)
-  - **Simulacro Completo:** Los 5 módulos seguidos (50 preguntas)
+  - **Práctica Rápida:** Elige un módulo específico (10, 20 o 30 preguntas)
+  - **Simulacro Completo:** Los 5 módulos seguidos (30 preguntas * módulo)
 - **Funcionalidades:**
   - ⏱️ Temporizador por pregunta (60s normales, 120s para lecturas)
   - 📈 Estadísticas de desempeño
