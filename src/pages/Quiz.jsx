@@ -10,6 +10,8 @@ import { AlertCircle, CheckCircle2, XCircle, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import ReadingTextPanel from "../components/quiz/ReadingTextPanel";
+import SimpleReadingText from "../components/quiz/SimpleReadingText";
+import TranslatableText from "../components/quiz/TranslatableText";
 
 const moduleNames = {
   razonamiento_cuantitativo: "Razonamiento Cuantitativo",
@@ -23,10 +25,11 @@ export default function Quiz() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const mode = searchParams.get("mode");
+
   const selectedModule = searchParams.get("module");
-  const selectedDifficulty = (
-    searchParams.get("difficulty") || ""
-  ).toLowerCase();
+
+  const selectedCount = parseInt(searchParams.get("count") || "", 10);
+  const startModule = searchParams.get("startModule");
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
@@ -53,6 +56,16 @@ export default function Quiz() {
     },
   });
 
+  // Agregar función de barajado Fisher-Yates (mejor aleatoriedad)
+  const shuffleArray = (array) => {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    return newArray;
+  };
+
   useEffect(() => {
     console.log("Quiz useEffect triggered", {
       allQuestionsLength: allQuestions?.length || 0,
@@ -67,27 +80,69 @@ export default function Quiz() {
 
       if (mode === "full") {
         const modules = Object.keys(moduleNames);
+        const questionsByModule = {};
+        
+        // Organizar preguntas por módulo
         modules.forEach((mod) => {
           const moduleQuestions = allQuestions.filter((q) => q.module === mod);
-          const shuffled = [...moduleQuestions].sort(() => Math.random() - 0.5);
-          filtered = [...filtered, ...shuffled.slice(0, 10)];
+          // Reemplazar barajado sesgado por Fisher-Yates
+          const shuffledQuestions = shuffleArray(moduleQuestions);
+          questionsByModule[mod] = shuffledQuestions;
         });
+        
+        // Si hay un módulo de inicio, empezar por ese
+        if (startModule && questionsByModule[startModule]) {
+          // Agregar primero el módulo seleccionado
+          filtered = [...questionsByModule[startModule]];
+          // Luego agregar el resto de módulos en orden
+          modules.forEach((mod) => {
+            if (mod !== startModule) {
+              filtered = [...filtered, ...questionsByModule[mod]];
+            }
+          });
+        } else {
+          // Si no hay módulo de inicio, agregar todos en orden
+          modules.forEach((mod) => {
+            filtered = [...filtered, ...questionsByModule[mod]];
+          });
+        }
       } else {
         let moduleQuestions = allQuestions.filter(
           (q) => q.module === selectedModule,
         );
-        if (
-          selectedDifficulty &&
-          ["facil", "medio", "dificil"].includes(selectedDifficulty)
-        ) {
-          moduleQuestions = moduleQuestions.filter(
-            (q) =>
-              (q.difficulty || "medio").toLowerCase() === selectedDifficulty,
-          );
-        }
-        const shuffled = [...moduleQuestions].sort(() => Math.random() - 0.5);
-        filtered = shuffled.slice(0, 10);
+        // Reemplazar barajado sesgado por Fisher-Yates
+        const shuffledQuestions = shuffleArray(moduleQuestions);
+
+        const countVal =
+          Number.isFinite(selectedCount) && [10, 20, 30].includes(selectedCount)
+            ? selectedCount
+            : 10;
+        filtered = shuffledQuestions.slice(0, countVal);
       }
+
+      // Barajar opciones de respuesta para cada pregunta
+      const questionsWithShuffledAnswers = filtered.map(question => {
+        // Asegurarse de que las opciones de respuesta existan antes de barajar
+        if (question.option_a && question.option_b && question.option_c && question.option_d) {
+          const options = [
+            { key: 'A', value: question.option_a },
+            { key: 'B', value: question.option_b },
+            { key: 'C', value: question.option_c },
+            { key: 'D', value: question.option_d },
+          ];
+          const shuffledOptions = shuffleArray(options);
+          const newQuestion = { ...question };
+          shuffledOptions.forEach((opt, index) => {
+            newQuestion[`option_${String.fromCharCode(65 + index).toLowerCase()}`] = opt.value;
+            // Si esta opción es la correcta, actualizar la letra de la respuesta correcta
+            if (opt.key === question.correct_answer) {
+              newQuestion.correct_answer = String.fromCharCode(65 + index);
+            }
+          });
+          return newQuestion;
+        }
+        return question;
+      });
 
       console.log("Setting quiz questions", {
         filteredLength: filtered.length,
@@ -97,7 +152,8 @@ export default function Quiz() {
       setCurrentQuestionIndex(0);
       setSelectedAnswer(null);
       setShowExplanation(false);
-      setQuizQuestions(filtered);
+      // Usar preguntas con opciones barajadas
+      setQuizQuestions(questionsWithShuffledAnswers);
 
       if (filtered.length > 0) {
         const hasReadingText =
@@ -106,7 +162,7 @@ export default function Quiz() {
         setTimeLeft(hasReadingText ? 120 : 60);
       }
     }
-  }, [allQuestions, mode, selectedModule]);
+  }, [allQuestions, mode, selectedModule, selectedCount, startModule]); // Agregado startModule a las dependencias
 
   useEffect(() => {
     if (showExplanation || quizQuestions.length === 0) return;
@@ -155,7 +211,7 @@ export default function Quiz() {
 
         isCorrect,
 
-        difficulty: currentQuestion.difficulty,
+        difficulty: currentQuestion.difficulty, // Mantener en el estado si es necesario para resultados, pero no se muestra
       },
     ]);
 
@@ -202,19 +258,21 @@ export default function Quiz() {
       mode,
       moduleName:
         mode === "quick" ? moduleNames[selectedModule] : "Simulacro Completo",
+
       score,
+
       correct: correctCount,
+
       total: quizQuestions.length,
-      difficulty: selectedDifficulty || null,
+
+      count: Number.isFinite(selectedCount) ? selectedCount : null,
       answers: finalAnswers,
     });
     localStorage.setItem("saberProScores", JSON.stringify(scores));
 
     navigate(
       createPageUrl("Results") +
-        `?score=${score}&correct=${correctCount}&total=${quizQuestions.length}&mode=${mode}${
-          mode === "quick" ? `&module=${selectedModule}` : ""
-        }`,
+        `?score=${score}&correct=${correctCount}&total=${quizQuestions.length}&mode=${mode}${mode === "quick" ? `&module=${selectedModule}` : ""}`,
     );
   };
 
@@ -229,51 +287,69 @@ export default function Quiz() {
 
   if (
     mode === "quick" &&
-    (!selectedDifficulty ||
-      !["facil", "medio", "dificil"].includes(selectedDifficulty))
+    !(Number.isFinite(selectedCount) && [10, 20, 30].includes(selectedCount))
   ) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="max-w-md w-full bg-white border rounded-lg shadow p-6 space-y-4 text-center">
           <h2 className="text-xl font-semibold text-gray-900">
-            Elige la dificultad
+            Elige la cantidad de preguntas
           </h2>
           <p className="text-sm text-gray-600">
-            Selecciona la dificultad para el módulo{" "}
+            Selecciona cuántas preguntas quieres para el módulo{" "}
             {moduleNames[selectedModule] || selectedModule}
           </p>
-          <div className="grid grid-cols-3 gap-3">
-            <Button
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+            <button
               onClick={() =>
                 navigate(
-                  `${createPageUrl("Quiz")}?mode=quick&module=${selectedModule}&difficulty=facil`,
+                  `${createPageUrl("Quiz")}?mode=quick&module=${selectedModule}&count=10`,
                 )
               }
-              className="bg-green-600 hover:bg-green-700"
+              className="group relative bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-4 sm:py-6 px-3 sm:px-4 rounded-lg sm:rounded-xl shadow-md hover:shadow-lg transform hover:-translate-y-0.5 sm:hover:-translate-y-1 transition-all duration-200"
             >
-              Fácil
-            </Button>
-            <Button
+              <div className="text-center">
+                <div className="text-2xl sm:text-3xl font-bold mb-0.5 sm:mb-1">10</div>
+                <div className="text-xs sm:text-sm opacity-90 leading-tight">PREGUNTAS</div>
+                <div className="text-xs opacity-75 mt-0.5 sm:mt-1 leading-tight">Rápido</div>
+              </div>
+              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 rounded-lg sm:rounded-xl transition-opacity duration-200"></div>
+            </button>
+
+            <button
               onClick={() =>
                 navigate(
-                  `${createPageUrl("Quiz")}?mode=quick&module=${selectedModule}&difficulty=medio`,
+                  `${createPageUrl("Quiz")}?mode=quick&module=${selectedModule}&count=20`,
                 )
               }
-              className="bg-amber-600 hover:bg-amber-700"
+              className="group relative bg-gradient-to-br from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 text-white font-bold py-4 sm:py-6 px-3 sm:px-4 rounded-lg sm:rounded-xl shadow-md hover:shadow-lg transform hover:-translate-y-0.5 sm:hover:-translate-y-1 transition-all duration-200"
             >
-              Medio
-            </Button>
-            <Button
+              <div className="text-center">
+                <div className="text-2xl sm:text-3xl font-bold mb-0.5 sm:mb-1">20</div>
+                <div className="text-xs sm:text-sm opacity-90 leading-tight">PREGUNTAS</div>
+                <div className="text-xs opacity-75 mt-0.5 sm:mt-1 leading-tight">Intermedio</div>
+              </div>
+              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 rounded-lg sm:rounded-xl transition-opacity duration-200"></div>
+            </button>
+
+            <button
               onClick={() =>
                 navigate(
-                  `${createPageUrl("Quiz")}?mode=quick&module=${selectedModule}&difficulty=dificil`,
+                  `${createPageUrl("Quiz")}?mode=quick&module=${selectedModule}&count=30`,
                 )
               }
-              className="bg-red-600 hover:bg-red-700"
+              className="group relative bg-gradient-to-br from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white font-bold py-4 sm:py-6 px-3 sm:px-4 rounded-lg sm:rounded-xl shadow-md hover:shadow-lg transform hover:-translate-y-0.5 sm:hover:-translate-y-1 transition-all duration-200"
             >
-              Difícil
-            </Button>
+              <div className="text-center">
+                <div className="text-2xl sm:text-3xl font-bold mb-0.5 sm:mb-1">30</div>
+                <div className="text-xs sm:text-sm opacity-90 leading-tight">PREGUNTAS</div>
+                <div className="text-xs opacity-75 mt-0.5 sm:mt-1 leading-tight">Completo</div>
+              </div>
+              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 rounded-lg sm:rounded-xl transition-opacity duration-200"></div>
+            </button>
           </div>
+
           <Button
             variant="outline"
             onClick={() => navigate(createPageUrl("Home"))}
@@ -284,6 +360,7 @@ export default function Quiz() {
       </div>
     );
   }
+
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -342,105 +419,99 @@ export default function Quiz() {
     currentQuestion.reading_text && currentQuestion.reading_text.trim() !== "";
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900">
+    <div className="max-w-6xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8">
+      <div className="mb-4 sm:mb-6">
+        {/* Timer - Most prominente en móvil */}
+        <div className="flex items-center justify-center mb-4 sm:mb-0 sm:absolute sm:right-8 sm:top-8">
+          <div className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg border-2 ${
+            timeLeft <= 10 ? 'bg-red-50 border-red-200 text-red-700' :
+            timeLeft <= 30 ? 'bg-yellow-50 border-yellow-200 text-yellow-700' :
+            'bg-blue-50 border-blue-200 text-blue-700'
+          }`}>
+            <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="font-mono font-bold text-lg sm:text-xl">
+              {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-4 gap-3 sm:gap-0">
+          <div className="flex-1">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
               {mode === "full"
                 ? `Simulacro Completo — ${moduleNames[currentQuestion.module] || currentQuestion.module}`
-                : `${moduleNames[selectedModule]}${
-                    selectedDifficulty
-                      ? " — " +
-                        (selectedDifficulty === "facil"
-                          ? "Fácil"
-                          : selectedDifficulty === "medio"
-                            ? "Medio"
-                            : "Difícil")
-                      : ""
-                  }`}
+                : `${moduleNames[selectedModule]}`}
             </h2>
+            {Number.isFinite(selectedCount) && [10, 20, 30].includes(selectedCount) && (
+              <div className="flex flex-wrap items-center gap-2 mt-1 sm:mt-2">
+                <div className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-semibold ${
+                  selectedCount === 10 ? 'bg-blue-100 text-blue-800' :
+                  selectedCount === 20 ? 'bg-green-100 text-green-800' :
+                  'bg-purple-100 text-purple-800'
+                }`}>
+                  {selectedCount} PREGUNTAS
+                </div>
+                <div className={`text-xs px-2 py-1 rounded ${
+                  selectedCount === 10 ? 'bg-blue-50 text-blue-600' :
+                  selectedCount === 20 ? 'bg-green-50 text-green-600' :
+                  'bg-purple-50 text-purple-600'
+                }`}>
+                  {selectedCount === 10 ? 'Rápido' :
+                   selectedCount === 20 ? 'Intermedio' : 'Completo'}
+                </div>
+              </div>
+            )}
 
-            <p className="text-sm text-gray-500">
+            <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-0">
               Pregunta {currentQuestionIndex + 1} de {quizQuestions.length}
-              <span className="ml-2 inline-flex items-center gap-2">
-                <span className="text-gray-400">·</span>
-                <span className="text-gray-500">Dificultad:</span>
-                {(() => {
-                  const d = (
-                    currentQuestion.difficulty || "medio"
-                  ).toLowerCase();
-                  const badge =
-                    d === "facil"
-                      ? {
-                          label: "Fácil",
-                          cls: "bg-green-100 text-green-700 border border-green-200",
-                        }
-                      : d === "dificil"
-                        ? {
-                            label: "Difícil",
-                            cls: "bg-red-100 text-red-700 border border-red-200",
-                          }
-                        : {
-                            label: "Medio",
-                            cls: "bg-amber-100 text-amber-700 border border-amber-200",
-                          };
-                  return (
-                    <span className={`px-2 py-0.5 rounded ${badge.cls}`}>
-                      {badge.label}
-                    </span>
-                  );
-                })()}
-              </span>
+              {/* Eliminada la sección de dificultad */}
               {hasReadingText && (
-                <span className="ml-2 text-blue-600">
+                <span className="ml-1 sm:ml-2 text-blue-600 block sm:inline">
                   (con lectura - 2 minutos)
                 </span>
               )}
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <Clock className="w-5 h-5 text-gray-400" />
-            <span
-              className={`text-lg font-semibold ${timeLeft <= 10 ? "text-red-600" : "text-gray-900"}`}
-            >
-              {Math.floor(timeLeft / 60)}:
-              {(timeLeft % 60).toString().padStart(2, "0")}
-            </span>
-          </div>
+
         </div>
         <Progress value={progress} className="h-2" />
       </div>
 
       <div className={hasReadingText ? "grid md:grid-cols-2 gap-6" : ""}>
-        {hasReadingText && (
+        {hasReadingText && currentQuestion.module === "ingles" && (
           <ReadingTextPanel readingText={currentQuestion.reading_text} />
+        )}
+        {hasReadingText && currentQuestion.module !== "ingles" && (
+          <SimpleReadingText readingText={currentQuestion.reading_text} />
         )}
 
         <div className={hasReadingText ? "" : "max-w-3xl mx-auto"}>
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">
-                {currentQuestion.question_text}
+                {currentQuestion.module === "ingles" ? (
+                  <TranslatableText text={currentQuestion.question_text} />
+                ) : (
+                  currentQuestion.question_text
+                )}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {["A", "B", "C", "D"].map((option) => {
-                  const optionText =
-                    currentQuestion[`option_${option.toLowerCase()}`];
-                  const isSelected = selectedAnswer === option;
-                  const isCorrect = option === currentQuestion.correct_answer;
+                {/* Mapear las opciones de respuesta dinámicamente */}
+                {['A', 'B', 'C', 'D'].map((optionKey, index) => {
+                  const optionValue = currentQuestion[`option_${optionKey.toLowerCase()}`];
+                  const isSelected = selectedAnswer === optionKey;
+                  const isCorrect = optionKey === currentQuestion.correct_answer;
                   const showCorrect = showExplanation && isCorrect;
-                  const showIncorrect =
-                    showExplanation && isSelected && !isCorrect;
+                  const showIncorrect = showExplanation && isSelected && !isCorrect;
 
                   return (
                     <button
-                      key={option}
-                      onClick={() => handleAnswerSelect(option)}
+                      key={optionKey}
+                      onClick={() => handleAnswerSelect(optionKey)}
                       disabled={showExplanation}
-                      className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
+                      className={`w-full text-left p-3 sm:p-4 rounded-lg border-2 transition-all ${
                         showCorrect
                           ? "border-green-500 bg-green-50"
                           : showIncorrect
@@ -450,9 +521,9 @@ export default function Quiz() {
                               : "border-gray-200 hover:border-blue-300 hover:bg-gray-50"
                       } ${showExplanation ? "cursor-not-allowed" : "cursor-pointer"}`}
                     >
-                      <div className="flex items-start gap-3">
+                      <div className="flex items-start gap-2 sm:gap-3">
                         <div
-                          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-semibold ${
+                          className={`flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-semibold text-sm sm:text-base ${
                             showCorrect
                               ? "bg-green-500 text-white"
                               : showIncorrect
@@ -462,14 +533,20 @@ export default function Quiz() {
                                   : "bg-gray-200 text-gray-700"
                           }`}
                         >
-                          {option}
+                          {optionKey}
                         </div>
-                        <span className="flex-1 pt-1">{optionText}</span>
+                        <span className="flex-1 pt-0.5 sm:pt-1 text-sm sm:text-base">
+                          {currentQuestion.module === "ingles" ? (
+                            <TranslatableText text={optionValue} />
+                          ) : (
+                            optionValue
+                          )}
+                        </span>
                         {showCorrect && (
-                          <CheckCircle2 className="w-6 h-6 text-green-500" />
+                          <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-green-500 flex-shrink-0" />
                         )}
                         {showIncorrect && (
-                          <XCircle className="w-6 h-6 text-red-500" />
+                          <XCircle className="w-5 h-5 sm:w-6 sm:h-6 text-red-500 flex-shrink-0" />
                         )}
                       </div>
                     </button>
@@ -489,27 +566,30 @@ export default function Quiz() {
                 </Alert>
               )}
 
-              <div className="flex gap-3 mt-6">
-                {!showExplanation ? (
-                  <Button
-                    onClick={handleSubmitAnswer}
-                    disabled={!selectedAnswer}
-                    className="flex-1"
-                    size="lg"
-                  >
-                    Verificar Respuesta
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={handleNextQuestion}
-                    className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700"
-                    size="lg"
-                  >
-                    {currentQuestionIndex < quizQuestions.length - 1
-                      ? "Siguiente Pregunta"
-                      : "Ver Resultados"}
-                  </Button>
-                )}
+              {/* Botón de acción principal - más prominente en móvil */}
+              <div className="sticky bottom-0 bg-white pt-3 pb-4 -mx-6 px-6 border-t border-gray-200 sm:static sm:bg-transparent sm:border-0 sm:p-0 sm:m-0">
+                <div className="flex flex-col gap-2">
+                  {!showExplanation ? (
+                    <Button
+                      onClick={handleSubmitAnswer}
+                      disabled={!selectedAnswer}
+                      className="w-full py-3 sm:py-2 text-base sm:text-sm font-semibold shadow-lg sm:shadow-none"
+                      size={selectedAnswer ? "lg" : "default"}
+                    >
+                      Verificar Respuesta
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={handleNextQuestion}
+                      className="w-full py-3 sm:py-2 text-base sm:text-sm font-semibold bg-gradient-to-r from-blue-600 to-blue-700 shadow-lg sm:shadow-none"
+                      size="lg"
+                    >
+                      {currentQuestionIndex < quizQuestions.length - 1
+                        ? "Siguiente Pregunta"
+                        : "Ver Resultados"}
+                    </Button>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>

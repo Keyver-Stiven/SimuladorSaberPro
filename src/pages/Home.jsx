@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Brain, Book, Users, Edit, Globe, Zap, Target } from "lucide-react";
@@ -11,51 +11,68 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-
-const modules = [
-  {
-    id: "razonamiento_cuantitativo",
-    name: "Razonamiento Cuantitativo",
-    icon: Brain,
-    color: "from-blue-500 to-blue-600",
-    description: "Resuelve problemas matemáticos y de lógica",
-    questions: 10,
-  },
-  {
-    id: "lectura_critica",
-    name: "Lectura Crítica",
-    icon: Book,
-    color: "from-purple-500 to-purple-600",
-    description: "Analiza y comprende textos complejos",
-    questions: 10,
-  },
-  {
-    id: "competencias_ciudadanas",
-    name: "Competencias Ciudadanas",
-    icon: Users,
-    color: "from-green-500 to-green-600",
-    description: "Evalúa situaciones sociales y cívicas",
-    questions: 10,
-  },
-  {
-    id: "comunicacion_escrita",
-    name: "Comunicación Escrita",
-    icon: Edit,
-    color: "from-orange-500 to-orange-600",
-    description: "Desarrolla habilidades de escritura",
-    questions: 10,
-  },
-  {
-    id: "ingles",
-    name: "Inglés",
-    icon: Globe,
-    color: "from-red-500 to-red-600",
-    description: "Practica comprensión en inglés",
-    questions: 10,
-  },
-];
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function Home() {
+  const [selectedStartModule, setSelectedStartModule] = useState("razonamiento_cuantitativo");
+
+  const moduleNames = {
+    razonamiento_cuantitativo: "Razonamiento Cuantitativo",
+    lectura_critica: "Lectura Crítica",
+    competencias_ciudadanas: "Competencias Ciudadanas",
+    comunicacion_escrita: "Comunicación Escrita",
+    ingles: "Inglés",
+  };
+
+  const modules = [
+    {
+      id: "razonamiento_cuantitativo",
+      name: "Razonamiento Cuantitativo",
+      icon: Brain,
+      color: "from-blue-500 to-blue-600",
+      description: "Resuelve problemas matemáticos y de lógica",
+      questions: 10,
+    },
+    {
+      id: "lectura_critica",
+      name: "Lectura Crítica",
+      icon: Book,
+      color: "from-purple-500 to-purple-600",
+      description: "Analiza y comprende textos complejos",
+      questions: 10,
+    },
+    {
+      id: "competencias_ciudadanas",
+      name: "Competencias Ciudadanas",
+      icon: Users,
+      color: "from-green-500 to-green-600",
+      description: "Evalúa situaciones sociales y cívicas",
+      questions: 10,
+    },
+    {
+      id: "comunicacion_escrita",
+      name: "Comunicación Escrita",
+      icon: Edit,
+      color: "from-orange-500 to-orange-600",
+      description: "Desarrolla habilidades de escritura",
+      questions: 10,
+    },
+    {
+      id: "ingles",
+      name: "Inglés",
+      icon: Globe,
+      color: "from-red-500 to-red-600",
+      description: "Practica comprensión en inglés",
+      questions: 10,
+    },
+  ];
+ 
   const [recentScores, setRecentScores] = React.useState([]);
 
   React.useEffect(() => {
@@ -82,33 +99,50 @@ export default function Home() {
 
       {/* Mode Selection */}
       <div className="grid md:grid-cols-2 gap-6 mb-12">
-        <Link to={createPageUrl("Quiz") + "?mode=full"}>
-          <Card className="border-2 hover:border-orange-500 transition-all duration-300 hover:shadow-lg h-full">
-            <CardHeader>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center">
-                  <Target className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <CardTitle className="text-2xl">Simulacro Completo</CardTitle>
-                  <CardDescription>Los 5 módulos seguidos</CardDescription>
-                </div>
+        <Card className="border-2 hover:border-orange-500 transition-all duration-300 hover:shadow-lg h-full">
+          <CardHeader>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center">
+                <Target className="w-6 h-6 text-white" />
               </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600 mb-4">
-                Experimenta el examen completo con 50 preguntas. Simula las
-                condiciones reales del Saber PRO.
-              </p>
-              <Badge variant="outline" className="mb-4">
-                50 preguntas · 50 minutos
-              </Badge>
+              <div>
+                <CardTitle className="text-2xl">Simulacro Completo</CardTitle>
+                <CardDescription>Los 5 módulos seguidos</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-600 mb-4">
+              Experimenta el examen completo con todas las preguntas disponibles. 
+              Simula las condiciones reales del Saber PRO.
+            </p>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                ¿Por qué módulo quieres empezar?
+              </label>
+              <Select value={selectedStartModule} onValueChange={setSelectedStartModule}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Selecciona un módulo" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(moduleNames).map(([key, name]) => (
+                    <SelectItem key={key} value={key}>
+                      {name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <Link 
+              to={createPageUrl("Quiz") + `?mode=full&startModule=${selectedStartModule}`}
+              className="block w-full"
+            >
               <Button className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700">
                 Comenzar Simulacro
               </Button>
-            </CardContent>
-          </Card>
-        </Link>
+            </Link>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Modules Grid */}

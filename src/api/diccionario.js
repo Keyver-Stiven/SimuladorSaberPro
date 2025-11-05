@@ -1,4 +1,8 @@
 import { questionsData } from "../data/questions.js";
+import { additionalQuestionsData } from "../data/additional_questions.js";
+
+// Combine all questions
+const allQuestionsData = [...questionsData, ...additionalQuestionsData];
 
 // Simulated delay to mimic network requests
 const simulateDelay = (ms = 300) =>
@@ -99,8 +103,8 @@ const mockLLMTranslation = async (text) => {
     look: "mirar",
     use: "usar",
     go: "ir",
-    come: "venir",
-    find: "encontrar",
+    Train: "Tren",
+    Wakes: "encontrar",
     call: "llamar",
     know: "saber",
     // Time and quantity
@@ -256,14 +260,65 @@ const mockLLMTranslation = async (text) => {
     side: "lado",
     been: "sido",
     now: "ahora",
+    
+    // Missing words from user request
+    up: "arriba",
+    leaves: "hojas",
+    according: "según",
   };
 
   // Split text into words
+
   const words = text.toLowerCase().split(/\s+/);
+
   const translatedWords = words.map((word) => {
-    // Remove punctuation for lookup
-    const cleanWord = word.replace(/[.,!?;:]/g, "");
-    return translations[cleanWord] || `[${word}]`;
+    // Normalize token: remove punctuation, quotes, parentheses, and curly/smart quotes
+    let clean = word.replace(/[.,!?;:()"'`]/g, "").replace(/[’‘“”]/g, "");
+
+    // Strip English possessive 's or ’s
+    clean = clean.replace(/(?:'|’)(s)$/i, "");
+
+    // Simple stemming: try to map common inflections to base form
+    // Priority: direct match -> stemmed match -> original fallback
+    const tryKeys = [clean];
+
+    // If not directly found, strip common suffixes (ing, ed, es, s)
+    if (!translations[clean]) {
+      let stem = clean;
+      // avoid stripping 'ss' plural artifacts (e.g., 'glass' -> don't remove final s)
+      const original = stem;
+      // 1) -ing
+      if (!translations[stem] && /ing$/.test(stem)) {
+        stem = stem.replace(/ing$/, "");
+        tryKeys.push(stem);
+      }
+      // 2) -ed
+      if (!translations[stem] && /ed$/.test(stem)) {
+        stem = stem.replace(/ed$/, "");
+        tryKeys.push(stem);
+      }
+      // 3) -es
+      if (!translations[stem] && /es$/.test(stem)) {
+        // handle cases like 'watches' -> 'watch'
+        stem = stem.replace(/es$/, "");
+        tryKeys.push(stem);
+      }
+      // 4) -s (avoid words ending with 'ss')
+      if (!translations[stem] && /s$/.test(stem) && !/ss$/.test(stem)) {
+        stem = stem.replace(/s$/, "");
+        tryKeys.push(stem);
+      }
+
+      // If still nothing and we altered it too much, keep original as last resort
+      if (stem !== original && !translations[stem]) {
+        tryKeys.push(original);
+      }
+    }
+
+    // Pick first key that exists in translations
+    const key = tryKeys.find((k) => translations[k]) ?? null;
+
+    return key ? translations[key] : `[${word}]`;
   });
 
   return `Traducción: ${translatedWords.join(" ")}`;
@@ -277,17 +332,17 @@ export const diccionario = {
       list: async () => {
         console.log("[base44Client] Fetching questions...");
         await simulateDelay(100);
-        console.log("[base44Client] Questions loaded:", questionsData.length);
-        if (questionsData.length > 0) {
-          console.log("[base44Client] Sample question:", questionsData[0]);
+        console.log("[base44Client] Questions loaded:", allQuestionsData.length);
+        if (allQuestionsData.length > 0) {
+          console.log("[base44Client] Sample question:", allQuestionsData[0]);
         }
         // Return a copy to avoid mutation
-        return [...questionsData];
+        return [...allQuestionsData];
       },
 
       get: async (id) => {
         await simulateDelay();
-        return questionsData.find((q) => q.id === id) || null;
+        return allQuestionsData.find((q) => q.id === id) || null;
       },
 
       create: async (data) => {
@@ -296,25 +351,25 @@ export const diccionario = {
           id: Date.now().toString(),
           ...data,
         };
-        questionsData.push(newQuestion);
+        allQuestionsData.push(newQuestion);
         return newQuestion;
       },
 
       update: async (id, data) => {
         await simulateDelay();
-        const index = questionsData.findIndex((q) => q.id === id);
+        const index = allQuestionsData.findIndex((q) => q.id === id);
         if (index !== -1) {
-          questionsData[index] = { ...questionsData[index], ...data };
-          return questionsData[index];
+          allQuestionsData[index] = { ...allQuestionsData[index], ...data };
+          return allQuestionsData[index];
         }
         return null;
       },
 
       delete: async (id) => {
         await simulateDelay();
-        const index = questionsData.findIndex((q) => q.id === id);
+        const index = allQuestionsData.findIndex((q) => q.id === id);
         if (index !== -1) {
-          questionsData.splice(index, 1);
+          allQuestionsData.splice(index, 1);
           return { success: true };
         }
         return { success: false };
