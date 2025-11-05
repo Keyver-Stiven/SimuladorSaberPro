@@ -6,7 +6,7 @@ import TranslatableText from "./TranslatableText";
 export default function ReadingTextPanel({ readingText }) {
 
   return (
-    <Card className="p-6 bg-blue-50 border-blue-200 h-fit sticky top-4">
+    <Card className="p-6 bg-blue-50 border-blue-200 h-fit sticky top-4 md:sticky md:top-4 reading-text-mobile">
       <div className="flex items-center gap-2 mb-4">
         <BookOpen className="w-5 h-5 text-blue-600" />
         <h3 className="text-lg font-semibold text-blue-900">Reading Text</h3>

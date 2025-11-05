@@ -419,10 +419,10 @@ export default function Quiz() {
     currentQuestion.reading_text && currentQuestion.reading_text.trim() !== "";
 
   return (
-    <div className="max-w-6xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8">
-      <div className="mb-4 sm:mb-6">
+      <div className="max-w-6xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8 quiz-content-flow">
+      <div className="mb-4 sm:mb-6 quiz-section">
         {/* Timer - Most prominente en móvil */}
-        <div className="flex items-center justify-center mb-4 sm:mb-0 sm:absolute sm:right-8 sm:top-8">
+        <div className="flex items-center justify-center mb-4 sm:mb-0 sm:absolute sm:right-8 sm:top-8 timer-container">
           <div className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg border-2 ${
             timeLeft <= 10 ? 'bg-red-50 border-red-200 text-red-700' :
             timeLeft <= 30 ? 'bg-yellow-50 border-yellow-200 text-yellow-700' :
@@ -477,7 +477,7 @@ export default function Quiz() {
         <Progress value={progress} className="h-2" />
       </div>
 
-      <div className={hasReadingText ? "grid md:grid-cols-2 gap-6" : ""}>
+      <div className={hasReadingText ? "grid md:grid-cols-2 gap-6 quiz-content-flow" : "quiz-content-flow"}>
         {hasReadingText && currentQuestion.module === "ingles" && (
           <ReadingTextPanel readingText={currentQuestion.reading_text} />
         )}

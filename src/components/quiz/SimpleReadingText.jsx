@@ -6,7 +6,7 @@ export default function SimpleReadingText({ readingText }) {
   if (!readingText) return null;
 
   return (
-    <Card className="p-6 bg-gray-50 border-gray-200 h-fit sticky top-4">
+    <Card className="p-6 bg-gray-50 border-gray-200 h-fit sticky top-4 md:sticky md:top-4 reading-text-mobile">
       <div className="flex items-center gap-2 mb-4">
         <BookOpen className="w-5 h-5 text-gray-600" />
         <h3 className="text-lg font-semibold text-gray-900">Texto de Lectura</h3>

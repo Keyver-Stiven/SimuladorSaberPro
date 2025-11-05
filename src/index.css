@@ -57,3 +57,51 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Mobile-specific fixes for quiz layout */
+@media (max-width: 767px) {
+  /* Prevent sticky positioning on mobile to avoid overlap */
+  .sticky-mobile-fix {
+    position: relative !important;
+    top: auto !important;
+    margin-bottom: 1rem;
+  }
+  
+  /* Ensure proper content flow */
+  .quiz-content-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  /* Prevent horizontal overflow */
+  body {
+    overflow-x: hidden;
+  }
+  
+  /* Ensure minimum height for screens */
+  .min-h-screen {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+  
+  /* Fix for reading text panels on mobile */
+  .reading-text-mobile {
+    position: relative !important;
+    top: auto !important;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Ensure timer doesn't overlap content */
+  .timer-container {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    margin-bottom: 1rem;
+  }
+  
+  /* Add proper spacing between sections */
+  .quiz-section {
+    margin-bottom: 1.5rem;
+  }
+}

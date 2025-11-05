@@ -92,7 +92,7 @@ export default function Home() {
           Simulador Saber PRO
         </h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Practica con exámenes simulados realistas y mejora tu desempeño en las
+          Solterita.com practica con exámenes simulados realistas y mejora tu desempeño en las
           Pruebas Saber PRO
         </p>
       </div>
