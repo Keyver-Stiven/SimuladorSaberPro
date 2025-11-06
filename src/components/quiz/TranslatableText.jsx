@@ -13,6 +13,9 @@ export default function TranslatableText({ text, className = "" }) {
   const [isTranslating, setIsTranslating] = useState(false);
   const [popoverOpen, setPopoverOpen] = useState(false);
 
+  // Check if text is a React element/JSX
+  const isJSX = text && typeof text === 'object' && text.$$typeof;
+
   // Translate text and update state
   const translateTextFunc = async (text) => {
     if (!text || !text.trim()) return;
@@ -51,7 +54,9 @@ export default function TranslatableText({ text, className = "" }) {
 
   // Tokenize text preserving spaces and punctuation for word-by-word tapping
   const tokens = useMemo(() => {
-    if (!text) return [];
+    // If text is JSX/React element, return empty array (can't tokenize JSX)
+    if (!text || isJSX) return [];
+    
     // Split by words and separators (spaces and punctuation)
     const parts = text.split(/(\w+|\W+)/).filter(Boolean);
     return parts.map((part, index) => {
@@ -63,7 +68,7 @@ export default function TranslatableText({ text, className = "" }) {
         key: `token-${index}-${part}`
       };
     });
-  }, [text]);
+  }, [text, isJSX]);
 
   return (
     <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
@@ -72,35 +77,40 @@ export default function TranslatableText({ text, className = "" }) {
         onMouseUp={handleTextSelection}
         onTouchEnd={handleTextSelection}
       >
-        <PopoverTrigger asChild>
-          <div className="inline">
-            {tokens.map((token) =>
-              token.type === "word" ? (
-                <span
-                  key={token.key}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleTapWord(token.value);
-                  }}
-                  className="inline px-0.5 rounded hover:bg-blue-100 focus:bg-blue-100 focus:outline-none active:bg-blue-200 transition-colors cursor-pointer"
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
+        {isJSX ? (
+          // If text is JSX, render it directly without word-by-word translation
+          <div>{text}</div>
+        ) : (
+          <PopoverTrigger asChild>
+            <div className="inline">
+              {tokens.map((token) =>
+                token.type === "word" ? (
+                  <span
+                    key={token.key}
+                    onClick={(e) => {
+                      e.stopPropagation();
                       handleTapWord(token.value);
-                    }
-                  }}
-                  aria-label={`Translate word ${token.value}`}
-                >
-                  {token.value}
-                </span>
-              ) : (
-                <span key={token.key}>{token.value}</span>
-              ),
-            )}
-          </div>
-        </PopoverTrigger>
+                    }}
+                    className="inline px-0.5 rounded hover:bg-blue-100 focus:bg-blue-100 focus:outline-none active:bg-blue-200 transition-colors cursor-pointer"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleTapWord(token.value);
+                      }
+                    }}
+                    aria-label={`Translate word ${token.value}`}
+                  >
+                    {token.value}
+                  </span>
+                ) : (
+                  <span key={token.key}>{token.value}</span>
+                ),
+              )}
+            </div>
+          </PopoverTrigger>
+        )}
       </div>
       <PopoverContent className="w-80">
         <div className="space-y-2">

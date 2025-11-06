@@ -157,7 +157,11 @@ export default function Quiz() {
 
       if (filtered.length > 0) {
         const hasReadingText =
-          filtered[0].reading_text && filtered[0].reading_text.trim() !== "";
+          filtered[0].reading_text && (
+            typeof filtered[0].reading_text === 'string' 
+              ? filtered[0].reading_text.trim() !== ""
+              : filtered[0].reading_text !== null && filtered[0].reading_text !== undefined
+          );
 
         setTimeLeft(hasReadingText ? 120 : 60);
       }
@@ -186,7 +190,11 @@ export default function Quiz() {
 
   const getTimeForQuestion = (question) => {
     const hasReadingText =
-      question?.reading_text && question.reading_text.trim() !== "";
+      question?.reading_text && (
+        typeof question.reading_text === 'string' 
+          ? question.reading_text.trim() !== ""
+          : question.reading_text !== null && question.reading_text !== undefined
+      );
     return hasReadingText ? 120 : 60;
   };
 
@@ -416,7 +424,11 @@ export default function Quiz() {
   const currentQuestion = quizQuestions[currentQuestionIndex];
   const progress = ((currentQuestionIndex + 1) / quizQuestions.length) * 100;
   const hasReadingText =
-    currentQuestion.reading_text && currentQuestion.reading_text.trim() !== "";
+    currentQuestion.reading_text && (
+      typeof currentQuestion.reading_text === 'string' 
+        ? currentQuestion.reading_text.trim() !== ""
+        : currentQuestion.reading_text !== null && currentQuestion.reading_text !== undefined
+    );
 
   return (
       <div className="max-w-6xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8 quiz-content-flow">

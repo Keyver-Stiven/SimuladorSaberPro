@@ -167,8 +167,42 @@ export const questionsData = [
     id: "in_011",
     module: "ingles",
     reading_group: "sales_table_qtr_001",
-    reading_text:
-      "Quarterly Sales (Units)\n\n| Quarter | Product A | Product B |\n|---------|-----------|-----------|\n|   Q1    |    120    |     90    |\n|   Q2    |    150    |    110    |\n|   Q3    |    140    |    130    |\n|   Q4    |    160    |    125    |",
+    reading_text: (
+      <div>
+        <h3>Quarterly Sales (Units)</h3>
+        <table className="responsive-table">
+          <thead>
+            <tr>
+              <th>Quarter</th>
+              <th>Product A</th>
+              <th>Product B</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Q1</td>
+              <td>120</td>
+              <td>90</td>
+            </tr>
+            <tr>
+              <td>Q2</td>
+              <td>150</td>
+              <td>110</td>
+            </tr>
+            <tr>
+              <td>Q3</td>
+              <td>140</td>
+              <td>130</td>
+            </tr>
+            <tr>
+              <td>Q4</td>
+              <td>160</td>
+              <td>125</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    ),
     question_text: "In which quarter did Product A reach its highest sales?",
     option_a: "Q1",
     option_b: "Q2",
@@ -182,8 +216,37 @@ export const questionsData = [
     id: "in_012",
     module: "ingles",
     reading_group: "train_schedule_001",
-    reading_text:
-      "Train Schedule (City Line)\n\n| Time  | Destination |\n|-------|-------------|\n| 07:30 |   Central   |\n| 08:00 |   Riverside |\n| 08:30 |   Central   |\n| 09:00 |   Airport   |",
+    reading_text: (
+      <div>
+        <h3>Train Schedule (City Line)</h3>
+        <table className="responsive-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Destination</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>07:30</td>
+              <td>Central</td>
+            </tr>
+            <tr>
+              <td>08:00</td>
+              <td>Riverside</td>
+            </tr>
+            <tr>
+              <td>08:30</td>
+              <td>Central</td>
+            </tr>
+            <tr>
+              <td>09:00</td>
+              <td>Airport</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    ),
     question_text:
       "If you want to arrive at Central by 8:30, which train should you take?",
     option_a: "07:30 to Central",
@@ -198,8 +261,37 @@ export const questionsData = [
     id: "in_013",
     module: "ingles",
     reading_group: "recipe_ingredients_001",
-    reading_text:
-      "Smoothie Ingredients (per glass)\n\n| Ingredient | Amount |\n|------------|--------|\n| Banana     |  1     |\n| Milk       | 200 ml |\n| Oats       |  30 g  |\n| Honey      |  1 tsp |",
+    reading_text: (
+      <div>
+        <h3>Smoothie Ingredients (per glass)</h3>
+        <table className="responsive-table">
+          <thead>
+            <tr>
+              <th>Ingredient</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Banana</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>Milk</td>
+              <td>200 ml</td>
+            </tr>
+            <tr>
+              <td>Oats</td>
+              <td>30 g</td>
+            </tr>
+            <tr>
+              <td>Honey</td>
+              <td>1 tsp</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    ),
     question_text: "How much milk is needed for one glass of smoothie?",
     option_a: "100 ml",
     option_b: "200 ml",
@@ -212,8 +304,37 @@ export const questionsData = [
     id: "in_014",
     module: "ingles",
     reading_group: "price_list_cafe_001",
-    reading_text:
-      "Cafe Price List\n\n| Item       | Price |\n|------------|-------|\n| Espresso   | $2.00 |\n| Latte      | $3.50 |\n| Cappuccino | $3.50 |\n| Tea        | $1.80 |",
+    reading_text: (
+      <div>
+        <h3>Cafe Price List</h3>
+        <table className="responsive-table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Espresso</td>
+              <td>$2.00</td>
+            </tr>
+            <tr>
+              <td>Latte</td>
+              <td>$3.50</td>
+            </tr>
+            <tr>
+              <td>Cappuccino</td>
+              <td>$3.50</td>
+            </tr>
+            <tr>
+              <td>Tea</td>
+              <td>$1.80</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    ),
     question_text:
       "If you buy one Latte and one Tea, how much do you pay in total?",
     option_a: "$3.50",
@@ -227,67 +348,135 @@ export const questionsData = [
     id: "in_015",
     module: "ingles",
     reading_group: "calendar_meeting_001",
-    reading_text:
-      "Team Meeting Calendar\n\n| Date      | Event         |\n|-----------|---------------|\n| May 10    | Design Review |\n| May 12    | Client Call   |\n| May 15    | Sprint Retro  |",
+    reading_text: (
+      <div>
+        <h3>Team Meeting Calendar</h3>
+        <table className="responsive-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Event</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>May 10</td>
+              <td>Design Review</td>
+            </tr>
+            <tr>
+              <td>May 12</td>
+              <td>Client Call</td>
+            </tr>
+            <tr>
+              <td>May 15</td>
+              <td>Sprint Retro</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    ),
     question_text: "On which date is the Client Call scheduled?",
     option_a: "May 10",
     option_b: "May 12",
     option_c: "May 15",
     option_d: "May 20",
     correct_answer: "B",
-    explanation: "La tabla de calendario muestra ‘Client Call’ el 12 de mayo.",
+    explanation: "La tabla de calendario muestra 'Client Call' el 12 de mayo.",
   },
   {
     id: "in_016",
     module: "ingles",
     reading_group: "water_intake_chart_001",
-    reading_text:
-      "Daily Water Intake (glasses)\n\n| Time     | Glasses |\n|----------|---------|\n| Morning  |    3    |\n| Afternoon|    2    |\n| Evening  |    2    |",
+    reading_text: (
+      <div>
+        <h3>Daily Water Intake (glasses)</h3>
+        <table className="responsive-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Glasses</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Morning</td>
+              <td>3</td>
+            </tr>
+            <tr>
+              <td>Afternoon</td>
+              <td>2</td>
+            </tr>
+            <tr>
+              <td>Evening</td>
+              <td>2</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    ),
     question_text: "How many glasses are recommended for the morning?",
     option_a: "Two",
     option_b: "Three",
     option_c: "Four",
     option_d: "One",
     correct_answer: "B",
-    explanation: "La fila ‘Morning’ (mañana) indica 3 vasos.",
+    explanation: "La fila 'Morning' (mañana) indica 3 vasos.",
   },
   {
     id: "in_017",
     module: "ingles",
-    reading_group: "image_signs_001",
-    image_url:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/No_parking.svg/240px-No_parking.svg.png",
-    question_text: "What does this sign indicate?",
-    option_a: "No entry",
-    option_b: "No parking",
-    option_c: "Stop",
-    option_d: "Turn right",
-    correct_answer: "B",
-    explanation:
-      "La señal corresponde a ‘No parking’ (prohibido parquear/estacionar).",
+
+    question_text: "Choose the correct word to complete the sentence: 'Please ___ quiet in the library.'",
+    option_a: "keep",
+    option_b: "make",
+    option_c: "do",
+    option_d: "take",
+    correct_answer: "A",
+    explanation: "La expresión correcta es 'keep quiet' (mantenerse callado).",
   },
   {
     id: "in_018",
     module: "ingles",
-    reading_group: "image_weather_thermometer_001",
-    image_url:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Thermometer_Centigrade.svg/240px-Thermometer_Centigrade.svg.png",
-    question_text:
-      "If the thermometer shows 0°C, what is the weather likely to be?",
+
+    question_text: "Which word best describes a temperature of 0°C?",
     option_a: "Hot",
     option_b: "Very warm",
     option_c: "Freezing",
     option_d: "Humid",
     correct_answer: "C",
-    explanation:
-      "0°C corresponde a punto de congelación, por lo que el clima es muy frío (‘freezing’).",
+    explanation: "0°C corresponde al punto de congelación, por lo que el clima es muy frío ('freezing').",
   },
-  {
+ {
     id: "in_019",
     module: "ingles",
     reading_group: "bus_capacity_table_001",
-    reading_text:
-      "Bus Capacity\n\n| Bus No. | Seats |\n|---------|-------|\n|   12    |  40   |\n|   24    |  32   |\n|   33    |  28   |",
+    reading_text: (
+      <div>
+        <h3>Bus Capacity</h3>
+        <table className="responsive-table">
+          <thead>
+            <tr>
+              <th>Bus No.</th>
+              <th>Seats</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>12</td>
+              <td>40</td>
+            </tr>
+            <tr>
+              <td>24</td>
+              <td>32</td>
+            </tr>
+            <tr>
+              <td>33</td>
+              <td>28</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    ),
     question_text: "Which bus has the fewest seats?",
     option_a: "Bus 12",
     option_b: "Bus 24",
@@ -299,17 +488,14 @@ export const questionsData = [
   {
     id: "in_020",
     module: "ingles",
-    reading_group: "image_bicycle_lane_001",
-    image_url:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Bicycle_sign.svg/240px-Bicycle_sign.svg.png",
-    question_text: "This sign on the road most likely indicates a:",
+
+    question_text: "What does a bicycle symbol on the road typically indicate?",
     option_a: "Pedestrian-only path",
     option_b: "Bicycle lane",
     option_c: "Car-only lane",
     option_d: "No entry area",
     correct_answer: "B",
-    explanation:
-      "El símbolo de bicicleta indica carril para bicicletas (‘bicycle lane’).",
+    explanation: "El símbolo de bicicleta indica carril para bicicletas ('bicycle lane').",
   },
 
   // ============================
