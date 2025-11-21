@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { diccionario } from "@/api/diccionario";
+import { diccionario } from "@/api/traductor";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import { createPageUrl } from "@/utilidades";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";

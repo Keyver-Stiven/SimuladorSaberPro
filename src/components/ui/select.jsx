@@ -1,7 +1,7 @@
 import * as React from "react"
 import { ChevronDown } from "lucide-react"
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utilidades"
 
 const SelectContext = React.createContext({
   value: undefined,

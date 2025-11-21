@@ -1,4 +1,66 @@
 # 🎓 Simulador Saber PRO
+
+Aplicación web en React (Vite) para practicar y simular preguntas del examen Saber PRO, organizada por módulos y con soporte de textos de lectura, preguntas múltiples y explicación de respuestas.
+
+**Estado actual (tras los cambios de nombres a español)**
+- Páginas: `src/pages/Inicio.jsx`, `src/pages/Cuestionario.jsx`, `src/pages/Resultados.jsx`, `src/pages/Estadisticas.jsx`.
+- Datos: `src/data/preguntas.jsx` (contiene JSX), `src/data/preguntas_adicionales.js`.
+- Utilidades: `src/utilidades.js`, `src/lib/utilidades.js`.
+- API de traducción/diccionario: `src/api/traductor.js` (exporta `diccionario`).
+- Se mantiene `src/components/Layout.jsx` sin renombrar, según lo solicitado.
+
+**Estructura del proyecto**
+- `src/App.jsx` define rutas y usa `Layout` para envolver las páginas.
+- Alias `@` apunta a `src`, por lo que los imports usan rutas como `@/api/traductor`, `@/utilidades`, `@/components/ui/...`, `@/lib/utilidades`.
+- UI con componentes en `src/components/ui/` y estilos de Tailwind en `src/index.css`.
+
+**Rutas principales**
+- `Inicio`.
+- `Cuestionario`.
+- `Resultados`.
+- `Estadisticas`.
+
+**Datos y diccionario**
+- `@/api/traductor` combina las preguntas de `preguntas.jsx` y `preguntas_adicionales.js` y expone `diccionario.entities.Question.list()` para obtener todas las preguntas.
+- `Cuestionario.jsx` usa `@tanstack/react-query` para cargar preguntas desde `diccionario`.
+
+**Formato de preguntas**
+- Cada pregunta tiene la forma:
+  - `id`: string único.
+  - `module`: uno de `razonamiento_cuantitativo`, `lectura_critica`, `competencias_ciudadanas`, `comunicacion_escrita`, `ingles`.
+  - `reading_group`: agrupa preguntas relacionadas a un mismo texto/tabla.
+  - `reading_text`: puede ser `string` o contenido JSX (por eso `preguntas.jsx` usa extensión `.jsx`).
+  - `question_text`: enunciado.
+  - `option_a` … `option_d`: opciones.
+  - `correct_answer`: letra `A`–`D`.
+  - `explanation`: texto explicativo.
+
+**Por qué `preguntas.jsx` usa `.jsx`**
+- El archivo contiene elementos JSX (por ejemplo, tablas con `<table>`); para que Vite/React lo procese correctamente, la extensión debe ser `.jsx` o se debe convertir el contenido a solo texto plano. `preguntas_adicionales.js` no contiene JSX y puede usar `.js`.
+
+**Instalación y ejecución**
+- Requisitos: Node.js 18+.
+- Instala dependencias: `npm install`.
+- Ejecuta en desarrollo: `npm run dev`.
+- Abre en el navegador: normalmente `http://localhost:5173/` (si el puerto está ocupado, Vite usará otro, por ejemplo `5174`).
+
+**Utilidades**
+- `@/utilidades`: funciones generales (por ejemplo, `createPageUrl`).
+- `@/lib/utilidades`: utilidades de UI (por ejemplo, `cn` para clases CSS).
+
+**Convenciones de importación (alias `@`)**
+- `@/api/traductor` → diccionario y traducciones.
+- `@/components/ui/...` → componentes UI.
+- `@/lib/utilidades` → helpers de UI (`cn`).
+- `@/utilidades` → utilidades de navegación.
+
+**Contribuir**
+- Añade o edita preguntas en `src/data/preguntas.jsx` (si necesitas tablas/listas en JSX) o `src/data/preguntas_adicionales.js` (contenido en texto plano).
+- Mantén consistentes los módulos y el formato de pregunta descrito arriba.
+
+**Notas**
+- Si prefieres unificar extensiones a `.js`, primero elimina cualquier JSX en `preguntas.jsx` y conviértelo a texto, o migra ese contenido JSX a componentes y referencia texto en los datos.
+
 Aplicación web interactiva para practicar y prepararse para las Pruebas Saber PRO en Colombia. Incluye simulacros de los 5 módulos principales con preguntas de práctica, temporizador, y seguimiento de progreso.
 
 ## 📋 Características

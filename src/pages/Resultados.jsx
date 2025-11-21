@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import { createPageUrl } from "@/utilidades";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy, CheckCircle2, XCircle, RotateCcw, Home } from "lucide-react";

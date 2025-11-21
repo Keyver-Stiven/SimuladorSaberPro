@@ -5,7 +5,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { translateText } from "@/api/translationService";
+import { translateFromDictionary } from "@/api/traductor";
 
 export default function TranslatableText({ text, className = "" }) {
   const [selectedText, setSelectedText] = useState("");
@@ -26,7 +26,7 @@ export default function TranslatableText({ text, className = "" }) {
     setTranslation("");
     
     try {
-      const result = await translateText(text);
+      const result = await translateFromDictionary(text);
       setTranslation(result);
     } catch (error) {
       setTranslation("Error al traducir. Intenta de nuevo.");

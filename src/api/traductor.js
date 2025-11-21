@@ -1,5 +1,5 @@
-import { questionsData } from "../data/questions.jsx";
-import { additionalQuestionsData } from "../data/additional_questions.js";
+import { questionsData } from "../data/preguntas.jsx";
+import { additionalQuestionsData } from "../data/preguntas_adicionales.js";
 
 // Combine all questions
 const allQuestionsData = [...questionsData, ...additionalQuestionsData];
@@ -12,7 +12,7 @@ const simulateDelay = (ms = 300) =>
 const mockLLMTranslation = async (text) => {
   await simulateDelay(500);
 
-const translations = {
+  const translations = {
   
   the: "el/la",
   and: "y",
@@ -117,6 +117,7 @@ const translations = {
   incredible: "increíble",
   different: "diferente",
   many: "muchos",
+  much: "muchos",
   home: "hogar",
   diversity: "diversidad",
   species: "especies",
@@ -683,6 +684,17 @@ const translations = {
   });
 
   return `Traducción: ${translatedWords.join(" ")}`;
+};
+
+// Función de traducción simplificada para el componente TranslatableText
+export const translateFromDictionary = async (text) => {
+  await simulateDelay(300);
+  
+  if (!text || text.trim() === "") {
+    return "Por favor seleccione texto para traducir.";
+  }
+  
+  return await mockLLMTranslation(text);
 };
 
 // API diccionario (mock)

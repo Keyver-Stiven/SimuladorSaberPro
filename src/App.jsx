@@ -2,10 +2,10 @@ import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import Layout from './components/Layout'
-import Home from './pages/Home'
-import Quiz from './pages/Quiz'
-import Results from './pages/Results'
-import Stats from './pages/Stats'
+import Home from './pages/Inicio'
+import Quiz from './pages/Cuestionario'
+import Results from './pages/Resultados'
+import Stats from './pages/Estadisticas'
 
 const queryClient = new QueryClient({
   defaultOptions: {
