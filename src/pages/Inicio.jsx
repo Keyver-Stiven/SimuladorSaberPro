@@ -92,16 +92,16 @@ export default function Home() {
           Simulador Saber PRO
         </h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Solterita.com practica con exámenes simulados realistas y mejora tu desempeño en las
+          Practica con exámenes simulados realistas y mejora tu desempeño en las
           Pruebas Saber PRO
         </p>
       </div>
 
       {/* Mode Selection */}
-      <div className="grid md:grid-cols-2 gap-6 mb-12">
-        <Card className="border-2 hover:border-orange-500 transition-all duration-300 hover:shadow-lg h-full">
+      <div className="flex justify-center mb-12">
+        <Card className="w-full max-w-2xl border-2 hover:border-orange-500 transition-all duration-300 hover:shadow-lg h-full">
           <CardHeader>
-            <div className="flex items-center gap-3 mb-2">
+            <div className="flex flex-col items-center text-center gap-3 mb-2">
               <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center">
                 <Target className="w-6 h-6 text-white" />
               </div>
@@ -111,7 +111,7 @@ export default function Home() {
               </div>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="text-center">
             <p className="text-gray-600 mb-4">
               Experimenta el examen completo con todas las preguntas disponibles. 
               Simula las condiciones reales del Saber PRO.

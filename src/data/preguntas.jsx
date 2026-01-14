@@ -670,7 +670,7 @@ export const questionsData = [
     option_c: "3.297 cm³",
     option_d: "4.616 cm³",
     correct_answer: "B",
-    explanation: "Volumen = πr²h = 3.14 × 49 × 15 = 3.14 × 735 = 2.307.9 ≈ 2.308 cm³"
+    explanation: "Volumen = πr²h = 3.14 × 49 × 15 = 3.14 × 735 = 2307.9 ≈ 2308 cm³"
   },
   {
     id: "rq_005",
@@ -878,7 +878,7 @@ export const questionsData = [
     option_b: "27",
     option_c: "30",
     option_d: "33",
-    correct_answer: "B",
+    correct_answer: "A",
     explanation: "∫(2x+3)dx = x²+3x. Evaluado de 1 a 4: (16+12) - (1+3) = 28 - 4 = 24"
   },
   {
@@ -939,13 +939,13 @@ export const questionsData = [
   {
     id: "rq_029",
     module: "razonamiento_cuantitativo",
-    question_text: "La solución del sistema de ecuaciones: x + y + z = 6, 2x - y + z = 3, x + 2y - z = 4 es:",
+    question_text: "La solución del sistema de ecuaciones: x + y + z = 6, 2x - y + z = 6, x + 2y - z = 1 es:",
     option_a: "x=1, y=2, z=3",
     option_b: "x=2, y=1, z=3",
     option_c: "x=3, y=2, z=1",
     option_d: "x=1, y=3, z=2",
     correct_answer: "B",
-    explanation: "Resolviendo el sistema: Sumando primera y tercera ecuación: 2x+3y = 10. Sumando primera y segunda: 3x+2z = 9. Resolviendo: x=2, y=1, z=3"
+    explanation: "Resolviendo el sistema: Sumando primera y tercera ecuación: 2x+3y = 7. Sumando primera y segunda: 3x+2z = 12. Resolviendo: x=2, y=1, z=3"
   },
   {
     id: "rq_030",
