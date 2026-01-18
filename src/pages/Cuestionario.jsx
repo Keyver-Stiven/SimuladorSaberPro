@@ -433,20 +433,6 @@ export default function Quiz() {
   return (
       <div className="max-w-6xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8 quiz-content-flow">
       <div className="mb-4 sm:mb-6 quiz-section">
-        {/* Timer - Most prominente en móvil */}
-        <div className="flex items-center justify-center mb-4 sm:mb-0 sm:absolute sm:right-8 sm:top-8 timer-container">
-          <div className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg border-2 ${
-            timeLeft <= 10 ? 'bg-red-50 border-red-200 text-red-700' :
-            timeLeft <= 30 ? 'bg-yellow-50 border-yellow-200 text-yellow-700' :
-            'bg-blue-50 border-blue-200 text-blue-700'
-          }`}>
-            <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span className="font-mono font-bold text-lg sm:text-xl">
-              {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
-            </span>
-          </div>
-        </div>
-
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-4 gap-3 sm:gap-0">
           <div className="flex-1">
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
@@ -483,6 +469,18 @@ export default function Quiz() {
                 </span>
               )}
             </p>
+          </div>
+          <div className="flex items-center sm:ml-4">
+            <div className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg border-2 ${
+              timeLeft <= 10 ? 'bg-red-50 border-red-200 text-red-700' :
+              timeLeft <= 30 ? 'bg-yellow-50 border-yellow-200 text-yellow-700' :
+              'bg-blue-50 border-blue-200 text-blue-700'
+            }`}>
+              <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="font-mono font-bold text-lg sm:text-xl">
+                {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+              </span>
+            </div>
           </div>
 
         </div>
